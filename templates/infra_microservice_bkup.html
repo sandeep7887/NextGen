@@ -1,0 +1,236 @@
+{% extends "infra_index.html" %}
+
+{% load staticfiles %}
+
+{% block infra_datapage %}
+
+
+<link href="{% static 'infra_assets/css/bootstrap-table.min.css' %}" rel="stylesheet">
+<style type="text/css">
+	.parallel {background-color:#eaeef1;color:#9b9ea1;text-decoration:line-through}
+</style>
+
+	<div class="col-md-12">
+        <div class="card">
+        	<div class="card-header">
+        		{% if microservice %}
+        		<div class="col col-md-7">
+        			<strong class="card-title">Microservice Table: {{cloud|upper}}</strong>
+        		</div>
+                <div class="col col-md-5">
+					<strong class="card-title">Run category: </strong>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="inline-radio1" class="form-check-label ">
+                        <input type="radio" id="sequential" name="inline-radios" value="Sequential" class="form-check-input" checked="checked" onClick="sequential()"> Sequential
+                    </label>
+                	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="inline-radio1" class="form-check-label ">
+                        <input type="radio" id="parallel" name="inline-radios" value="Parallel" class="form-check-input p" onClick="parallel()"> Parallel
+                    </label>
+				</div>
+                {% elif userstories %}
+                <strong class="card-title">Userstories Table: {{cloud|upper}}</strong>
+                {% elif testcases %}
+                <strong class="card-title">Testcases Table: {{cloud|upper}}</strong>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <table id="table1" data-toggle="table" data-filter-control="true" data-toolbar="#toolbar">
+                	{% if microservice %}
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="prenom" data-filter-control="input" data-sortable="true">Microservice</th>
+							<th data-field="date" data-filter-control="select" data-sortable="true">Cloud</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in microservice %}
+						<tr>
+							<td class="bs-checkbox"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td >{{ item.microservice }}</td>
+							<td >{{ cloud }}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+					{% elif userstories %}
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="prenom" data-filter-control="input" data-sortable="true">User Story</th>
+							<th data-field="date" data-filter-control="select" data-sortable="true">Microservice</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in userstories %}
+						<tr>
+							<td class="bs-checkbox"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td>{{ item.suite }}</td>
+							<td>{{ item.microservice }}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+					{% elif testcases %}
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="prenom" data-filter-control="input" data-sortable="true">Testcases</th>
+							<th data-field="us" data-filter-control="select" data-sortable="true">User story</th>
+							<th data-field="ms" data-filter-control="select" data-sortable="true">Microservice</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in testcases %}
+						<tr class="selected" value="{{ item.tcname }},{{ item.suite }},{{ item.microservice }}">
+							<td class="bs-checkbox selected"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td>{{ item.tcname }}</td>
+							<td>{{ item.suite }}</td>
+							<td>{{ item.microservice }}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+					{% endif %}
+				</table>
+				<br>
+				{% if microservice %}
+				<button type="button" id="next" onClick="get_userstories()" class="btn btn-primary pull-right"><i class="fa fa-arrow-right"></i>&nbsp; Next</button>
+				{% elif userstories %}
+				<button type="button" id="next" onClick="get_testcases()" class="btn btn-primary pull-right"><i class="fa fa-arrow-right"></i>&nbsp; Next</button>
+				{% elif testcases %}
+				<button type="button" id="next" onClick="get_trigger_form()" class="btn btn-primary pull-right"><i class="fa fa-arrow-right"></i>&nbsp; Next</button>
+				{% endif %}
+            </div>
+        </div>
+    </div>
+
+<script src="{% static 'infra_assets/js/jquery.min.js' %}"></script>
+<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/editable/bootstrap-table-editable.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/export/bootstrap-table-export.js'></script>
+<script src='http://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/filter-control/bootstrap-table-filter-control.js'></script>
+<script src="{% static 'infra_assets/js/jquery.redirect.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$( "tr" ).change(function() {
+		if ($("#parallel").is(":checked")) {
+			var servers = ['SARS','UCSM','HX','UCSD']
+			var selected_servers = []
+			var allms = []
+			var ms = ''
+			var split_ms = []
+			$(this).parent().parent().find('input:checked').each(function() {
+				ms = ($(this).parent().parent().find('td:nth-child(2)').text())
+				split_ms = ms.split("_");
+				for (x = 0; x < servers.length; x++) {
+					for (y = 0; y < split_ms.length; y++) {
+						if (servers[x] == split_ms[y]) {
+							selected_servers.push(split_ms[y]);
+						}
+					}
+				}
+			})
+			console.log(selected_servers)
+			$(this).parent().parent().find('input').each(function () {
+				$('input[name="btSelectAll"]').prop('disabled', true);
+				$(this).prop('disabled' , false)
+		  		$(this).parent().parent('tr').removeClass('parallel');
+				var indi_ms = ''
+				var split_indi_ms = []
+				indi_ms = ($(this).parent().parent().find('td:nth-child(2)').text());
+				if (indi_ms != ms && indi_ms != '') {
+					split_indi_ms = indi_ms.split('_')
+					for (i = 0; i < selected_servers.length; i++) {
+						for (j = 0; j < split_indi_ms.length; j++) {
+							if (split_indi_ms[j] == selected_servers[i] && indi_ms != ms && $(this).prop('checked') != true) {
+						  		console.log('Need to disable : '+indi_ms);
+						  		console.log($(this).prop('checked'));
+						  		$(this).prop('disabled' , true);
+						  		$(this).parent().parent('tr').addClass('parallel');
+						  	} 
+						}
+					}
+				}
+			})
+		}
+	})
+});
+
+function sequential()
+{
+	$('#table1').find('.both').prop('disabled' , false)
+	$('input:checkbox').removeAttr('checked');
+	$('input:checkbox').prop('disabled' , false);
+	$('tr').removeClass('selected');
+	$('tr').removeClass('parallel');
+	$('input[name="btSelectAll"]').prop('disabled', false);
+}
+
+function parallel()
+{	
+	$('#table1').find('.both').prop('disabled' , true)
+	$('input:checkbox').removeAttr('checked');
+	$('input:checkbox').prop('disabled' , false);
+	$('tr').removeClass('selected');
+	$('input[name="btSelectAll"]').prop('disabled', true);
+}
+
+function get_userstories()
+{
+	$("tr:disabled").css({"background-color": "yellow", "font-size": "200%"});
+	var result = $("tr:has(:checked)")
+	var json = result.map(function () {
+	    return [$(this).children().slice(1).map(function () {
+	        return $(this).text().trim()
+	    }).get()]
+	}).get()
+	var data = JSON.stringify(json,0)
+	console.log(data)
+	if ($("#parallel").is(":checked")) {
+    	location.href = "http://10.225.67.65/get_userstories/?cloud={{ cloud|safe }}&ms="+data+'&parallel=true';
+    } else {
+    	location.href = "http://10.225.67.65/get_userstories/?cloud={{ cloud|safe }}&ms="+data+'&parallel=false';
+    }
+}
+
+function get_testcases()
+{
+    var result = $("tr:has(:checked)")
+	var json = result.map(function () {
+	    return [$(this).children().slice(1).map(function () {
+	        return $(this).text().trim()
+	    }).get()]
+	}).get()
+	var data = JSON.stringify(json,0)
+	console.log(data)
+    location.href = "http://10.225.67.65/get_testcases/?cloud={{ cloud|safe }}&us="+data+"&parallel={{ parallel|safe }}";
+}
+
+function get_trigger_form()
+{
+	var result = $("tr:has(:checked)")
+	var json = result.map(function () {
+	    return [$(this).children().slice(1).map(function () {
+	        return $(this).text().trim()
+	    }).get()]
+	}).get()
+	var data = JSON.stringify(json,0)
+	console.log(data)
+    location.href = "http://10.225.67.65/get_trigger_form/?cloud={{ cloud|safe }}&tc="+data+"&parallel={{ parallel|safe }}";
+}
+</script>
+
+{% endblock %}

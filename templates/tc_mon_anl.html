@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+  
+  
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script>
+	
+
+Highcharts.chart('container', {
+  colors: ['#807f7f', '#ED4343', '#50B432'],
+  chart: {
+    type: 'column'
+  },
+  title: {
+    text: 'Testcase Monthly Analysis'
+  },
+  xAxis: {
+    categories: {{date_list|safe}}
+  },
+  yAxis: {
+    min: 0,
+    allowDecimals: false,
+    title: {
+      text: 'Total no. of testcases'
+    },
+    stackLabels: {
+      enabled: true,
+      style: {
+        fontWeight: 'bold',
+        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+      }
+    }
+  },
+  legend: {
+    align: 'right',
+    x: -30,
+    verticalAlign: 'top',
+    y: 25,
+    floating: true,
+    backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+    borderColor: '#CCC',
+    borderWidth: 1,
+    shadow: false
+  },
+  tooltip: {
+    headerFormat: '<b>{point.x}</b><br/>',
+    pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+  },
+  plotOptions: {
+    column: {
+      stacking: 'normal',
+      dataLabels: {
+        enabled: true,
+        formatter:function(){
+            if(this.y > 0)
+                return this.y;
+        }
+      }
+    }
+  },
+  series: [{
+    name: 'NOTRUN',
+    data: {{notrun_list|safe}}
+  }, {
+    name: 'FAIL',
+    data: {{fail_list|safe}}
+  }, {
+    name: 'PASS',
+    data: {{pass_list|safe}}	
+  }]
+});
+</script>
+</body>
+</html>

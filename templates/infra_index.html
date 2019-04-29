@@ -1,0 +1,431 @@
+<!Doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" style="zoom: 0.89;">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <title>Intersight - CRR</title>
+    <meta name="description" content="Admin - HTML5 Admin Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link rel="apple-touch-icon" href="apple-icon.png"> -->
+    <!-- <link rel="shortcut icon" href="favicon.ico"> -->
+    {% load staticfiles %}
+    <link rel="icon" type="image/jpg" href="{% static 'infra_images/cisco-crr.png' %}">
+    <link href="{% static 'infra_vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'infra_vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'infra_vendors/themify-icons/css/themify-icons.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'infra_vendors/flag-icon-css/css/flag-icon.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'infra_vendors/selectFX/css/cs-skin-elastic.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'infra_vendors/jqvmap/dist/jqvmap.min.css' %}"rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'infra_assets/css/style.css' %}" rel="stylesheet"    >
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='https://cdn.rawgit.com/t4t5/sweetalert/v0.2.0/lib/sweet-alert.css'>
+
+</head>
+
+<body>
+
+
+    <!-- Left Panel -->
+    {% block infra_navbar%}
+
+    <aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <!-- <a class="navbar-brand" href="./"><img src="{% static 'infra_images/logo.png' %}" alt="Logo"></a>
+                <a class="navbar-brand hidden" href="./"><img src="{% static 'infra_images/logo2.png' %}" alt="Logo"></a> -->
+                <a class="navbar-brand" href="./"><h4>CRR - Infra</h4></a>
+                <a class="navbar-brand hidden" href="./"><h5>CRR</h5></a>
+            </div>
+
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="../"> <i class="menu-icon fa fa-home"></i>Home</a>
+                    </li>
+                    <h3 class="menu-title">Cloud</h3>
+                    <li>
+                        <a href="/infra_microservice/?cloud=staging"> <i class="menu-icon fa fa-cloud"></i>Staging</a>
+                    </li>
+                    <li>
+                        <a href="/infra_microservice/?cloud=production"> <i class="menu-icon fa fa-cloud-upload"></i>Production</a>
+                    </li>
+                    <li>
+                        <a href="/infra_microservice/?cloud=qa"> <i class="menu-icon fa fa-gears"></i>QA</a>
+                    </li>
+                    <li>
+                        <a href="/infra_microservice/?cloud=onprem"> <i class="menu-icon fa fa-sitemap"></i>On Prem</a>
+                    </li>
+                    <li>
+                        <a href="/infra_microservice/?cloud=cicdtest"> <i class="menu-icon fa fa-th-list"></i>CICD</a>
+                    </li>
+                    <h3 class="menu-title">Update DB</h3>
+                    <li>
+                        <a href="/insertionForm/"> <i class="menu-icon fa fa-edit"></i>Insert</a>
+                    </li>
+                    <li>
+                        <a href="/deletionForm/"> <i class="menu-icon fa fa-eraser"></i>Delete</a>
+                    </li>
+                    <h3 class="menu-title">Reports</h3>
+                    <li>
+                        <a href="http://10.106.233.126:8080" target="_blank"> <i class="menu-icon fa fa-dashboard"></i>Dashboard</a>
+                    </li>
+                    <h3 class="menu-title">Code Coverage</h3>
+                   <li>
+                        <a href="/coverapi/"> <i class="menu-icon fa fa-code"></i>API Coverage</a>
+                   </li>
+                    <h3 class="menu-title">Extras</h3>
+                       <li>
+                            <a href="/bookmark/"> <i class="menu-icon fa fa-bookmark"></i>Bookmark</a>
+                       </li>
+                       <li>
+                            <a href="/rerun/"> <i class="menu-icon fa fa-repeat"></i>Rerun Failed</a>
+                       </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+    </aside><!-- /#left-panel -->
+
+    {% endblock %}
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+
+    <div id="right-panel" class="right-panel">
+
+        <!-- Header-->
+        <header id="header" class="header">
+
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    {% block header%}
+                    <div class="header-left">
+                        <h3><strong>HOME</strong></h3>
+                    </div>
+                    {% endblock %}
+                </div>
+
+                <div class="col-sm-5">
+                    <div class="user-area float-right">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <!-- <img class="user-avatar rounded-circle" src="{% static 'infra_images/admin.jpg' %}" alt="User Avatar"> -->
+                            <i class="fa fa-user-circle fa-2x rounded-circle"></i>
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                            <!-- <a class="nav-link" href="#"><i class="fa fa-user"></i> My Profile</a> -->
+
+                            <!-- <a class="nav-link" href="#"><i class="fa fa-user"></i> Notifications <span class="count">13</span></a> -->
+
+                            <a class="nav-link" href="#"><i class="fa fa-cog"></i> Settings</a>
+
+                            <!-- <a class="nav-link" href="#"><i class="fa fa-power-off"></i> Logout</a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
+
+        <!-- <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li class="active">Dashboard</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        {% block infra_datapage %}
+        <meta http-equiv="refresh" content="30;url='../'">
+
+        <div class="content mt-3">
+
+
+            <div class="col-xl-9">
+                <div class="card">
+                    <div class="card-body" style="background-image: url({% static 'infra_images/net.jpg' %}); height:530px;" height="460">
+                        <div class="row">
+                            <h1 style="background-color: white; margin-top: 80px; font-weight: 700">&nbsp;&nbsp;What is  this tool about <i class="fa fa-question-circle"></i>&nbsp;&nbsp;</h1>
+                        </div>
+                        <div class="row"></div>
+                        <div class="row">
+                            <h2 style="background-color: white; max-width:80%;margin-top: 80px; font-weight: 700">&nbsp;&nbsp;Centralized automation infra for validating microservice functionality. &nbsp;&nbsp;</h2>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-flat-color-1">
+                    <!-- <a href="/infra_microservice/?cloud=staging" style="text-decoration: none;"> -->
+                        <div class="card-body">
+                            <div class="stat-widget-one" style="color: white">
+                                <div class="stat-icon dib"><i class="fa fa-cloud"></i></div>
+                                <div class="stat-content dib" style="min-width: 120px">
+                                    <div class="row">
+                                        <div class="dropdown float-right" style="margin-top: -15px !important;">
+                                            <button class="btn bg-transparent dropdown-toggle theme-toggle text-light" type="button" id="dropdownMenuButton1" data-toggle="dropdown">
+                                                {% if stagingJobs %}
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                    <span class="count">{{ stagingJobs|length }}</span>
+                                                {% else %}
+                                                    <i class="fa fa-cog"></i>
+                                                    <span class="count">0</span>
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <div class="dropdown-menu-content">
+                                                    {% if stagingJobs %}
+                                                        {% for item in stagingJobs %}
+                                                            <a class="dropdown-item" target="_blank" href="{{item.1}}">{{ item.0 }}</a>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <a class="dropdown-item" style="pointer-events: none;">No current jobs</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <div class="stat-digit" style="color: white">Staging</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- </a> -->
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-flat-color-2">
+                    <!-- <a href="/infra_microservice/?cloud=staging" style="text-decoration: none;"> -->
+                        <div class="card-body">
+                            <div class="stat-widget-one" style="color: white">
+                                <div class="stat-icon dib"><i class="fa fa-cloud-upload"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="row">
+                                        <div class="dropdown float-right" style="margin-top: -15px !important;">
+                                            <button class="btn bg-transparent dropdown-toggle theme-toggle text-light" type="button" id="dropdownMenuButton1" data-toggle="dropdown">
+                                                {% if productionJobs %}
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                    <span class="count">{{ productionJobs|length }}</span>
+                                                {% else %}
+                                                    <i class="fa fa-cog"></i>
+                                                    <span class="count">0</span>
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <div class="dropdown-menu-content">
+                                                    {% if productionJobs %}
+                                                        {% for item in productionJobs %}
+                                                            <a class="dropdown-item" target="_blank" href="{{item.1}}">{{ item.0 }}</a>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <a class="dropdown-item" style="pointer-events: none;">No current jobs</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <div class="stat-digit" style="color: white">Production</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- </a> -->
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-flat-color-3">
+                    <!-- <a href="/infra_microservice/?cloud=staging" style="text-decoration: none;"> -->
+                        <div class="card-body">
+                            <div class="stat-widget-one" style="color: white">
+                                <div class="stat-icon dib"><i class="fa fa-gears"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="row">
+                                        <div class="dropdown float-right" style="margin-top: -15px !important; margin-right: -50px;">
+                                            <button class="btn bg-transparent dropdown-toggle theme-toggle text-light" type="button" id="dropdownMenuButton1" data-toggle="dropdown">
+                                                {% if qaJobs %}
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                    <span class="count">{{ qaJobs|length }}</span>
+                                                {% else %}
+                                                    <i class="fa fa-cog"></i>
+                                                    <span class="count">0</span>
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <div class="dropdown-menu-content">
+                                                    {% if qaJobs %}
+                                                        {% for item in qaJobs %}
+                                                            <a class="dropdown-item" target="_blank" href="{{item.1}}">{{ item.0 }}</a>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <a class="dropdown-item" style="pointer-events: none;">No current jobs</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <div class="stat-digit" style="color: white">QA</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- </a> -->
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-flat-color-4">
+                    <!-- <a href="/infra_microservice/?cloud=staging" style="text-decoration: none;"> -->
+                        <div class="card-body">
+                            <div class="stat-widget-one" style="color: white">
+                                <div class="stat-icon dib"><i class="fa fa-sitemap"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="row">
+                                        <div class="dropdown float-right" style="margin-top: -15px !important; margin-right: -50px;">
+                                            <button class="btn bg-transparent dropdown-toggle theme-toggle text-light" type="button" id="dropdownMenuButton1" data-toggle="dropdown">
+                                                {% if onpremJobs %}
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                    <span class="count">{{ onpremJobs|length }}</span>
+                                                {% else %}
+                                                    <i class="fa fa-cog"></i>
+                                                    <span class="count">0</span>
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <div class="dropdown-menu-content">
+                                                    {% if onpremJobs %}
+                                                        {% for item in onpremJobs %}
+                                                            <a class="dropdown-item" target="_blank" href="{{item.1}}">{{ item.0 }}</a>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <a class="dropdown-item" style="pointer-events: none;">No current jobs</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <div class="stat-digit" style="color: white">On Prem</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- </a> -->
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-flat-color-5">
+                    <!-- <a href="/infra_microservice/?cloud=staging" style="text-decoration: none;"> -->
+                        <div class="card-body">
+                            <div class="stat-widget-one" style="color: white">
+                                <div class="stat-icon dib"><i class="fa fa-th-list"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="row">
+                                        <div class="dropdown float-right" style="margin-top: -15px !important; margin-right: -50px;">
+                                            <button class="btn bg-transparent dropdown-toggle theme-toggle text-light" type="button" id="dropdownMenuButton1" data-toggle="dropdown">
+                                                {% if cicdJobs %}
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                    <span class="count">{{ cicdJobs|length }}</span>
+                                                {% else %}
+                                                    <i class="fa fa-cog"></i>
+                                                    <span class="count">0</span>
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <div class="dropdown-menu-content">
+                                                    {% if cicdJobs %}
+                                                        {% for item in cicdJobs %}
+                                                            <a class="dropdown-item" target="_blank" href="{{item.1}}">{{ item.0 }}</a>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <a class="dropdown-item" style="pointer-events: none;">No current jobs</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <div class="stat-digit" style="color: white">CICD</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- </a> -->
+                </div>
+            </div>
+
+        </div> <!-- .content -->
+    </div><!-- /#right-panel -->
+
+    {% endblock %}
+    <!-- Right Panel -->
+
+    <script src="{% static 'infra_vendors/jquery/dist/jquery.min.js' %}"></script>
+    <script src='https://cdn.rawgit.com/t4t5/sweetalert/v0.2.0/lib/sweet-alert.min.js'></script>
+    <script src="{% static 'infra_vendors/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'infra_vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'infra_assets/js/main.js' %}"></script>
+
+
+    <script src="{% static 'infra_vendors/chart.js/dist/Chart.bundle.min.js' %}"></script>
+    <script src="{% static 'infra_assets/js/dashboard.js' %}"></script>
+    <script src="{% static 'infra_assets/js/widgets.js' %}"></script>
+    <script src="{% static 'infra_vendors/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+    <script src="{% static 'infra_vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>
+    <script src="{% static 'infra_vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+    <script src="{% static 'infra_assets/js/jquery.min.js' %}"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        if('{{ triggered|safe }}' == 'success') {
+            swal("Successfully triggered job!", "You will be soon notified with a mail!", "success");
+        }
+        if('{{ bookmark|safe }}' == 'success') {
+            swal("Successfully saved bookmark!", "Please check your save bookmark in Bookmark feature!", "success");
+        }
+    }); 
+    
+    </script>
+
+{% block additional_js %}
+{% endblock %}
+
+</body>
+
+</html>

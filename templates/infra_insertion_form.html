@@ -1,0 +1,82 @@
+{% extends "infra_index.html" %}
+
+{% load staticfiles %}
+
+{% block header%}
+    <div class="header-left">
+        <h3><strong>INSERT</strong></h3>
+    </div>
+{% endblock %}
+
+{% block infra_datapage %}
+
+    <link rel="stylesheet" href="{% static 'infra_vendors/chosen/chosen.min.css' %}">
+
+    <div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-xs-3 col-sm-3"> </div>
+                    <div class="col-xs-6 col-sm-6">
+                        <form method="POST" action="../insertionForm/">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="card-header" style="background-color: #1db6c6d1">
+                                <strong>Insert</strong> <small>Data</small>
+                            </div> 
+                            <div class="card-body card-block">
+                                <div class="form-group">
+                                    <label class=" form-control-label">Microservice</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-microchip"></i></div>
+                                        <input class="form-control" name="microservice" value="" required="">
+                                    </div>
+                                    <small class="form-text text-muted">ex. UCSD_FANWOOD</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class=" form-control-label">Userstory</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-book"></i></div>
+                                        <input class="form-control" name="userstory" value="" required="">
+                                    </div>
+                                        <small class="form-text text-muted">ex. US5256_UCSD_Fanwood_API</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class=" form-control-label">Testcases</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-table"></i></div>
+                                        <textarea rows="3" placeholder="testcases..." class="form-control" name="testcases" value="" required=""></textarea>
+                                    </div>
+                                    <small class="form-text text-muted">ex. fanwood_Tyn1547949c_ucsdinfo, fanwood_Tyn1547952c_devicestatus</small>
+                                </div>
+                                <button type="btn" class="btn btn-success btn-flat m-b-30 m-t-30"><i class="fa fa-angle-double-right fa-2x"></i> &nbspInsert into db</button>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+                    <div class="col-xs-3 col-sm-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'infra_vendors/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'infra_vendors/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'infra_vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'infra_assets/js/main.js' %}"></script>
+    <script src="{% static 'infra_vendors/chosen/chosen.jquery.min.js' %}"></script>
+    
+{% endblock %}
+
+{% block additional_js %}
+
+    <script>
+        $(document).ready(function() {
+            if('{{ progress|safe }}' == 'success') {
+                swal("Successfully inserted into db!", "You testcases now available in 'intersight-crr'!", "success");
+            }
+        });
+    </script>
+
+{% endblock %}

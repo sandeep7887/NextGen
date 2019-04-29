@@ -1,0 +1,143 @@
+{% extends "infra_index.html" %}
+
+{% load staticfiles %}
+
+{% block infra_datapage %}
+
+ <link rel='stylesheet' href='https://cdn.rawgit.com/t4t5/sweetalert/v0.2.0/lib/sweet-alert.css'>
+<link rel='stylesheet' href='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css'>
+
+
+	<div class="col-md-12">
+        <div class="card">
+        	<div class="card-header">
+                <strong class="card-title">Testcases Table : {{ cloud }}</strong>
+            </div>
+            <div class="card-body">
+                <table id="us_table" data-toggle="table" data-filter-control="true" data-toolbar="#toolbar">
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="prenom" data-filter-control="input" data-sortable="true">Testcases</th>
+							<th data-field="us" data-filter-control="select" data-sortable="true">User story</th>
+							<th data-field="ms" data-filter-control="select" data-sortable="true">Microservice</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in testcases %}
+						<tr class="selected">
+							<td class="bs-checkbox selected"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td>{{ item.tcname }}</td>
+							<td>{{ item.suite }}</td>
+							<td>{{ item.microservice }}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+				</table>
+            </div>
+        </div>
+    </div>
+
+	<div class="col-md-12">
+        <div class="card">
+        	<div class="card-header">
+                <strong class="card-title">Import Rack DB</strong>
+            </div>
+            <div class="card-body">
+            	<div class="col-md-9">
+            		<input type="file" id="file-input" name="file-input" class="form-control-file">
+            	</div>
+            	<div class="col-md-3">
+            		<button type="button" id="upload" onClick="upload()" class="btn btn-success pull-right"><i class="fa fa-upload"></i>&nbsp; Upload</button>
+            	</div>
+            </div>
+        </div>
+    </div>
+
+	<div class="col-md-12">
+        <div class="card">
+        	<div class="card-header">
+                <strong class="card-title">Notify list</strong>
+            </div>
+            <div class="card-body">
+            	<div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+                        <input id='mailid' class="form-control">
+                    </div>
+                    <small class="form-text text-muted">ex. abc@cisco.com,xyz@cisco.com</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="padding: 15px 15px">
+		<button type="button" id="trigger" onClick="trigger_click()" class="btn btn-primary pull-left"><i class="fa fa-dot-circle-o"></i>&nbsp; Trigger</button>
+	</div>
+	<br>
+	<div style="padding: 15px 17px; color: #ededed"><h1>.</h1></div>
+
+<!-- <script type="text/javascript">
+
+function next_click()
+{
+
+	var result = $("#table tr.selected td:nth-child(2)").html()
+	// var values = new Array();
+	// $.each($("#table tr.selected td:nth-child(2)").html()), function() {
+	// 	values.push($(this).text());
+	// }
+	// alert(values);
+    location.href = "http://127.0.0.1:8000/get_userstories/?cloud='{{ cloud|safe }}'&ms='"+result+"'";
+}
+</script> -->
+<script src='https://cdn.rawgit.com/t4t5/sweetalert/v0.2.0/lib/sweet-alert.min.js'></script>
+<script type="text/javascript">
+	function trigger_click()
+	{
+            var result = $("tr:has(:checked)")
+		  
+		var json = result.map(function () {
+		        return [$(this).children().slice(1).map(function () {
+		            return $(this).text().trim()
+		        }).get()]
+		    }).get()
+		    var mailid = document.getElementById("mailid").value;
+			var upload = document.getElementById("file-input").value;
+			// var params = ['{{ cloud | safe }}', mailid , upload, json]
+	        
+		var tcs = JSON.stringify(json,0)
+			// var tcs = json
+		    
+	        console.log(tcs)
+		console.log(typeof(tcs))
+		$.ajax({
+			url: "http://10.225.67.65/trigger/",
+	        type: "get",
+	        data: {'cloud' : '{{ cloud | safe }}', 'mail': mailid, 'dbfile': upload, 'tcs' : tcs, 'parallel' : '{{ parallel | safe }}'},
+	        success: function(html){
+			 	swal("Successfully trigger job!", "You will be soon notified with a mail!", "success");
+			}
+		});
+	}
+</script>
+<script type="text/javascript">
+	function upload(){
+		var x = document.getElementById("file-input").value;
+		alert(x);
+	}
+</script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/editable/bootstrap-table-editable.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/export/bootstrap-table-export.js'></script>
+<script src='http://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/filter-control/bootstrap-table-filter-control.js'></script>
+<script src="{% static 'infra_assets/js/infra_datatable.js' %}"></script>
+
+
+{% endblock %}

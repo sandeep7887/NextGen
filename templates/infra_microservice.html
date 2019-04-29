@@ -1,0 +1,351 @@
+{% extends "infra_index.html" %}
+
+{% load staticfiles %}
+
+{% block header%}
+    <div class="header-left">
+        <h3><strong>{{cloud|upper}}</strong></h3>
+    </div>
+{% endblock %}
+
+{% block infra_datapage %}
+
+
+<link href="{% static 'infra_assets/css/bootstrap-table.min.css' %}" rel="stylesheet">
+<style type="text/css">
+	.parallel {background-color:#eaeef1;color:#9b9ea1;text-decoration:line-through}
+</style>
+<style type="text/css">
+tbody {
+    display:block;
+    max-height:350px;
+    overflow:auto;
+}
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+table {
+    width:400px;
+}
+td.bs-checkbox {
+    width: 36px;
+}
+tbody td:last-child {
+    width: 300px;
+}
+thead td:last-child {
+    width: 300px;
+}
+.tableChild {
+	width: 70% !important;
+	font-size: small !important;
+	font-weight: 500 !important;
+}
+
+.tableLastChild {
+	width: 25% !important;
+}
+
+.hidePath {
+	display: none !important;
+}
+
+tbody::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+	border-radius: 10px;
+}
+
+tbody::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+tbody::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-image: -webkit-gradient(linear,
+									   left bottom,
+									   left top,
+									   color-stop(0.44, rgb(122,153,217)),
+									   color-stop(0.72, rgb(73,125,189)),
+									   color-stop(0.86, rgb(28,58,148)));
+}
+
+</style>
+
+	<div class="col-md-12">
+        <div class="card">
+        	<div class="card-header">
+        		{% if microservice %}
+	                <form method="POST" id="get_userstories" action="../get_userstories/" >
+	                {% csrf_token %}
+	        		<div class="col col-md-7">
+	        			<!-- <strong class="card-title">Microservice Table: {{cloud|upper}}</strong> -->
+	        		</div>
+	                <div class="col col-md-5">
+						<strong class="card-title">Run category: </strong>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label for="inline-radio1" class="form-check-label ">
+	                        <input type="radio" id="sequential" name="inline-radios" value="Sequential" class="form-check-input" checked="checked" onClick="sequential()"> Sequential
+	                    </label>
+	                	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label for="inline-radio1" class="form-check-label ">
+	                        <input type="radio" id="parallel" name="inline-radios" value="Parallel" class="form-check-input p" onClick="parallel()"> Parallel
+	                    </label>
+					</div>
+                {% elif userstories %}
+	                <form method="POST" id="get_testcases" action="../get_testcases/" >
+	                {% csrf_token %}
+	                <!-- <strong class="card-title">Userstories Table: {{cloud|upper}}</strong> -->
+                {% elif testcases %}
+	                <form method="POST" id="get_trigger_form" action="../get_trigger_form/" >
+	                {% csrf_token %}
+	                <!-- <strong class="card-title">Testcases Table: {{cloud|upper}}</strong> -->
+	                {% endif %}
+            </div>
+            <div class="card-body" style="padding: 0px !important; margin-top: -20px;">
+                <table id="table1" data-toggle="table" data-filter-control="true" data-toolbar="#toolbar">
+                	{% if microservice %}
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th class="tableChild" data-field="prenom" data-filter-control="input" data-sortable="true">Microservice</th>
+							<th class="tableLastChild" data-field="date" data-filter-control="select" data-sortable="true">Cloud</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in microservice %}
+						<tr>
+							<td style="width: 36px;" class="bs-checkbox"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td class="tableChild">{{ item }}</td>
+							<td class="tableLastChild">{{ cloud }}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+					{% elif userstories %}
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="prenom" data-filter-control="input" data-sortable="true">User Story</th>
+							<th class="tableLastChild" data-field="date" data-filter-control="select" data-sortable="true">Microservice</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in userstories %}
+						<tr>
+							<td class="bs-checkbox"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td>{{ item.suite }}</td>
+							<td class="tableLastChild">{{ item.microservice }}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+					{% elif testcases %}
+					<thead class="thead-dark">
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="prenom" data-filter-control="input" data-sortable="true">Testcases</th>
+							<th data-field="us" data-filter-control="select" data-sortable="true">User story</th>
+							<th class="tableLastChild" data-field="ms" data-filter-control="select" data-sortable="true">Microservice</th>
+							<th class="hidePath">Path</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in testcases %}
+						<tr class="selected" value="{{ item.tcname }},{{ item.suite }},{{ item.microservice }}">
+							<td class="bs-checkbox selected checkedAll"><input data-index="0" name="btSelectItem" type="checkbox"></td>
+							<td>{{ item.0 }}</td>
+							<td>{{ item.1 }}</td>
+							<td class="tableLastChild">{{ item.2 }}</td>
+							<td class="hidePath">{{item.3}}</td>
+						</tr>
+						{% empty %}
+        				<tr>
+							<td>Not found !!!</td>
+						</tr>
+        				{% endfor %}
+					</tbody>
+					{% endif %}
+				</table>
+				<br>
+				{% if microservice %}
+					<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-arrow-right"></i>&nbsp; Get userstories</button>
+				{% elif userstories %}
+					<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-arrow-right"></i>&nbsp; Get testcases</button>
+				{% elif testcases %}
+					<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-arrow-right"></i>&nbsp; Get trigger form</button>
+				{% endif %}
+				</form>
+            </div>
+        </div>
+    </div>
+
+<script src="{% static 'infra_assets/js/jquery.min.js' %}"></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/editable/bootstrap-table-editable.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/export/bootstrap-table-export.js'></script>
+<script src='https://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/filter-control/bootstrap-table-filter-control.js'></script>
+<script src="{% static 'infra_assets/js/jquery.redirect.min.js' %}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+	$('#table1 tr').click(function (event) {
+        if (event.target.type !== 'checkbox') {
+            $(':checkbox', this).trigger('click');
+        }
+    });
+
+    if ('{{bk|safe}}' == 'bookmark') {
+		$('input').prop('checked', true);
+		$(this).addClass('checkedAll');
+		// $('#table').bootstrapTable('checkAll');
+	}
+
+	$( "tr" ).change(function() {
+		if ($("#parallel").is(":checked")) {
+			var servers = ['SARS','UCSM','HX','UCSD']
+			var selected_servers = []
+			var allms = []
+			var ms = ''
+			var split_ms = []
+			$(this).parent().parent().find('input:checked').each(function() {
+				ms = ($(this).parent().parent().find('td:nth-child(2)').text())
+				split_ms = ms.split("_");
+				for (x = 0; x < servers.length; x++) {
+					for (y = 0; y < split_ms.length; y++) {
+						if (servers[x] == split_ms[y]) {
+							selected_servers.push(split_ms[y]);
+						}
+					}
+				}
+			})
+			console.log(selected_servers)
+			$(this).parent().parent().find('input').each(function () {
+				$('input[name="btSelectAll"]').prop('disabled', true);
+				$(this).prop('disabled' , false)
+		  		$(this).parent().parent('tr').removeClass('parallel');
+				var indi_ms = ''
+				var split_indi_ms = []
+				indi_ms = ($(this).parent().parent().find('td:nth-child(2)').text());
+				if (indi_ms != ms && indi_ms != '') {
+					split_indi_ms = indi_ms.split('_')
+					for (i = 0; i < selected_servers.length; i++) {
+						for (j = 0; j < split_indi_ms.length; j++) {
+							if (split_indi_ms[j] == selected_servers[i] && indi_ms != ms && $(this).prop('checked') != true) {
+						  		console.log('Need to disable : '+indi_ms);
+						  		console.log($(this).prop('checked'));
+						  		$(this).prop('disabled' , true);
+						  		$(this).parent().parent('tr').addClass('parallel');
+						  	} 
+						}
+					}
+				}
+			})
+		}
+	})
+});
+
+function sequential()
+{
+	$('#table1').find('.both').prop('disabled' , false)
+	$('input:checkbox').removeAttr('checked');
+	$('input:checkbox').prop('disabled' , false);
+	$('tr').removeClass('selected');
+	$('tr').removeClass('parallel');
+	$('input[name="btSelectAll"]').prop('disabled', false);
+}
+
+function parallel()
+{	
+	$('#table1').find('.both').prop('disabled' , true)
+	$('input:checkbox').removeAttr('checked');
+	$('input:checkbox').prop('disabled' , false);
+	$('tr').removeClass('selected');
+	$('input[name="btSelectAll"]').prop('disabled', true);
+}
+
+$('#get_userstories').submit(function(eventObj) {
+    if ($('#table1 input:checked').length > 0 == true) {
+		$("tr:disabled").css({"background-color": "yellow", "font-size": "200%"});
+		var result = $("tr:has(:checked)")
+		var json = result.map(function () {
+		    return [$(this).children().slice(1).map(function () {
+		        return $(this).text().trim()
+		    }).get()]
+		}).get()
+		var data = JSON.stringify(json,0)
+		console.log(data)
+		if ($("#parallel").is(":checked")) {			
+			$('#get_userstories').append('<input name="parallel" type="hidden" value="true" />');
+	    } else {
+			$('#get_userstories').append('<input name="parallel" type="hidden" value="false" />');
+	    }
+	    $('#get_userstories').append('<input name="cloud" type="hidden" value="{{cloud|safe}}" />');
+		$('#get_userstories').append("<input name='data' type='hidden' value='"+data+"' />");
+		return true;
+	} else {
+		swal({title:'Please select a microservice to proceed!!', type: 'info',confirmButtonColor: '#007bff'});
+		return false;
+	}
+});
+
+$('#get_testcases').submit(function(eventObj) {
+    if ($('#table1 input:checked').length > 0 == true) {
+    	var result = $("tr:has(:checked)")
+		var json = result.map(function () {
+		    return [$(this).children().slice(1).map(function () {
+		        return $(this).text().trim()
+		    }).get()]
+		}).get()
+		var data = JSON.stringify(json,0)
+		console.log(data)
+		$('#get_testcases').append('<input name="cloud" type="hidden" value="{{cloud|safe}}" />');
+		$('#get_testcases').append("<input name='data' type='hidden' value='"+data+"' />");
+		$('#get_testcases').append('<input name="parallel" type="hidden" value="{{ parallel|safe }}" />');
+		return true;
+	} else {
+		swal({title:'Please select a userstory to proceed!!', type: 'info',confirmButtonColor: '#007bff'});
+		return false;
+	}
+	
+});
+
+$('#get_trigger_form').submit(function(eventObj) {
+	if ($('#table1 input:checked').length > 0 == true) {
+		var result = $("tr:has(:checked)")
+		var json = result.map(function () {
+		    return [$(this).children().slice(1).map(function () {
+		        return $(this).text().trim()
+		    }).get()]
+		}).get()
+		var data = JSON.stringify(json,0)
+		$('#get_trigger_form').append('<input name="cloud" type="hidden" value="{{cloud|safe}}" />');
+		$('#get_trigger_form').append("<input name='data' type='hidden' value='"+data+"' />");
+		$('#get_trigger_form').append('<input name="parallel" type="hidden" value="{{ parallel|safe }}" />');
+		if ('{{bk|safe}}' == 'bookmark') {
+			$('#get_trigger_form').append('<input name="b_name" type="hidden" value="{{b_name}}" />');
+		}
+	    return true;
+	} else {
+		swal({title:'Please select a testcase to proceed!!', type: 'info',confirmButtonColor: '#007bff'});
+		return false;
+	}
+});
+
+</script>
+
+{% endblock %}

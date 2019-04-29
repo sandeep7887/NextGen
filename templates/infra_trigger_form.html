@@ -1,0 +1,81 @@
+{% extends "infra_index.html" %}
+
+{% load staticfiles %}
+
+{% block infra_datapage %}
+
+ <link rel='stylesheet' href='https://cdn.rawgit.com/t4t5/sweetalert/v0.2.0/lib/sweet-alert.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css'>
+
+<div class="col-md-12">
+	<div class="card">
+        <div class="card-header">
+            <strong>Trigger Form: {{ cloud|capfirst }}</strong>
+        </div>
+        <div class="card-body card-block">
+            <form method="post" action="/trigger/" enctype="multipart/form-data">
+            	{% csrf_token %}
+            	<div class="row form-group" hidden="">
+            		<input name="tcsInput" type="hidden" value="{{testcases}}"/>
+            		<input name="parallel" type="hidden" value="{{parallel}}"/>
+            		<input name="cloud" type="hidden" value="{{cloud}}"/>
+            	</div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label class=" form-control-label"><strong>Import Rack DB </strong><strong style="color: red">*</strong></label></div>
+                    <div class="col-12 col-md-9"><input type="file" id="file-input" name="fileInput" class="form-control-file" required><small class="form-text text-muted">Please choose your RackDB file</small></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label class=" form-control-label"><strong>Runtests Options</strong></label></div>
+                    <div class="col-12 col-md-9">
+                    	<div class="input-group">
+                        	<div class="input-group-addon"><i class="fa fa-crosshairs"></i></div>
+                        	<input id='runOptions' name="runOptions" class="form-control">
+                    	</div>
+                    	<small class="form-text text-muted">ex. browser=firefox, idp=okta</small>
+                   	</div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label class=" form-control-label"><strong class="card-title">Notify list <strong style="color: red">*</strong></strong></label></div>
+                    <div class="col-12 col-md-9">
+                    	<div class="form-group">
+		                    <div class="input-group">
+		                        <div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+		                        <input name="notifyList" class="form-control" required>
+		                    </div>
+                    		<small class="form-text text-muted">ex. abc@cisco.com, xyz@cisco.com</small>
+                    	</div>
+                   	</div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label class=" form-control-label"><strong class="card-title">Comment</strong></label></div>
+                    <div class="col-12 col-md-9">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-comments"></i></div>
+                                <textarea name="comment" id="textarea-input" rows="3" placeholder="Comment..." class="form-control"></textarea>
+                            </div>
+                            <small class="form-text text-muted">ex. please use above textarea for comments</small>
+                        </div>
+                    </div>
+                </div>
+            	<div class="card-footer">
+            		<button type="submit" class="btn btn-primary">
+                		<i class="fa fa-dot-circle-o"></i> Trigger
+            		</button>
+       			 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/editable/bootstrap-table-editable.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/export/bootstrap-table-export.js'></script>
+<script src='https://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/filter-control/bootstrap-table-filter-control.js'></script>
+<script src="{% static 'infra_assets/js/infra_datatable.js' %}"></script>
+
+
+{% endblock %}

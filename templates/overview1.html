@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Overview</title>
+
+    <!--CSS links below-->
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.min.css'>
+    <link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
+
+    <!-- Page level plugin CSS-->
+    <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+
+</head>
+<body style="margin: 2%">
+<div class="col-sm-3">
+    <form action="http:127.0.0.1/overview">
+    <div class="form-group">
+        <div class="input-group date" data-date-format="yyyy-mm-dd">
+            <input  id='dat' type="text" class="form-control" placeholder="yyyy-mm-dd">
+            <div class="input-group-addon" >
+                <span class="glyphicon glyphicon-calendar fa fa-calendar"></span>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary">Submit</button>
+    </div>
+    </form>
+</div>
+
+<div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+<table id="example" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+    <tr>
+        <th>Category</th>
+        <th>Pass</th>
+        <th>Fail</th>
+        <th>Not Run</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in full_list %}
+    <tr>
+        <td>{{ item.0 }}</td>
+        <td>{{ item.1 }}</td>
+        <td>{{ item.2 }}</td>
+        <td>{{ item.3 }}</td>
+        <td>{{ item.4 }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td>Not found!!!</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!--javascript links below-->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+} );
+</script>
+<script>
+Highcharts.chart('container', {
+    chart: {
+        type: 'bar'
+    },
+    colors: ['#b5aeae', '#ff3e3e', '#53dc8c','#2f7ed8'],
+    title: {
+        text: 'INTERSIGHT SUMMARY'
+    },
+    subtitle: {
+        text: 'Daily Intersight complete test summary'
+    },
+    xAxis: {
+        categories: ['INTERSIGHT PRODUCTION', 'INTERSIGHT STAGING', 'INTERSIGHT QA'],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Number of Test Cases',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' testcases'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true,
+            }
+        },
+        series: {
+            pointWidth: 12
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Not Run',
+        data: {{ not_run }}
+    }, {
+        name: 'Fail',
+        data: {{ fail }}
+    }, {
+        name: 'Pass',
+        data: {{ pass }}
+    }, {
+        name: 'Total',
+        data: {{ total }}
+    }]
+});
+</script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.min.js'></script>
+<script>
+     $('.input-group.date').datepicker({
+ 		format: "yyyy-mm-dd",
+ 		autoclose: true,
+        todayHighlight: true,
+        endDate: '+1d',
+		datesDisabled: '+1d',
+ 	});
+</script>
+</body>
+</html>

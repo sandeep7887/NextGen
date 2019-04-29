@@ -1,0 +1,59 @@
+{% extends "infra_index.html" %}
+
+<!-- {% load staticfiles %} -->
+
+{% block infra_datapage %}
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script> -->
+	<div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+				<div class="row">
+					<div class="col-xs-2 col-sm-2"></div>
+                    <div class="col-xs-8 col-sm-8">
+                        <form method="POST" action="/rerunDetails/">
+                        {% csrf_token %}
+                            <div class="card">
+                                <div class="card-header" style="background-color: #ff00009c">
+                                    <strong>Rerun</strong>
+                                </div> 
+                                <div class="card-body card-block">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Qali ID</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-repeat"></i></div>
+                                            <input class="form-control" name="rerunID" value="" required="">
+                                        </div>
+                                        <small class="form-text text-muted">ex. please enter QALI ID from the mail</small>
+                                    </div>
+                                    <button type="btn" class="btn btn-success btn-flat m-b-30 m-t-30"><i class="fa fa-angle-double-right fa-2x"></i> &nbspGet Info</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-xs-2 col-sm-2"></div>
+                </div>
+            </div>
+        </div>
+	</div>
+
+
+
+{% endblock %}
+
+{% block additional_js %}
+
+    <script>
+        $(document).ready(function() {
+            if({{ nofail|safe }} == 0) {
+                swal("No failed testcases found!", "Please try with Qali ID with failed testcases", "error");
+            }
+        });
+    </script>
+    
+{% endblock %}
